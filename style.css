@@ -347,6 +347,22 @@ img {
   cursor: pointer;
 }
 
+.switch-text { 
+  margin-top: 15px; 
+  font-size: 0.9rem; 
+  color: #666; 
+  text-align: center; 
+}
+#toggle-auth { 
+  color: #333; 
+  font-weight: bold; 
+  cursor: pointer; 
+  text-decoration: underline; 
+}
+#toggle-auth:hover { 
+  color: blue; 
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .main-header .container {

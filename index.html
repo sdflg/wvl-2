@@ -36,7 +36,7 @@
 
     <section class="product-section">
       <div class="container">
-        <div id="product-list">
+        <div class="product-grid">
           <!-- Products will be dynamically inserted here by main.js -->
         </div>
       </div>
@@ -47,13 +47,15 @@
     <button class="close-modal-btn" aria-label="Close">×</button>
     <h2>Login</h2>
     <form class="login-form">
+      <input type="text" id="signup-name" placeholder="Name" style="display:none;">
       <input type="email" placeholder="Email" required>
       <input type="password" placeholder="Password" required>
       <button type="submit">Log In</button>
     </form>
+    <p class="switch-text">Don't have an account? <span id="toggle-auth">Sign Up</span></p>
   </dialog>
 
-  <script src="main.js"></script>
+  <script type="module" src="main.js"></script>
 
 </body>
 </html>
