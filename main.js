@@ -1,8 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-// 1. Firebase 설정 (사용자 제공 정보)
+// 1. Firebase 설정
 const firebaseConfig = {
   apiKey: "AIzaSyBtU34dlEnhNb-Uy_6ABZJGEsf29Z_DV-8",
   authDomain: "wvl-2-f7daf.firebaseapp.com",
@@ -31,7 +31,7 @@ let currentCart = []; // 전역 장바구니 상태
 
 // 4. 메인 로직 실행
 document.addEventListener('DOMContentLoaded', () => {
-    // 상품 리스트 렌더링 (메인 페이지인 경우)
+    // 상품 리스트 렌더링
     const productGrid = document.querySelector('.product-grid');
     if (productGrid) {
         productGrid.innerHTML = products.map(p => `
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     }
 
-    // --- 로그인/회원가입 로직 ---
+    // 로그인/회원가입 로직
     const loginModal = document.getElementById('login-modal');
     const loginBtn = document.getElementById('login-btn'); 
     const submitBtn = document.querySelector('#login-modal button[type="submit"]');
@@ -82,11 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             if (auth.currentUser) {
-                signOut(auth).then(() => {
-                    alert("로그아웃 되었습니다.");
-                    localStorage.removeItem('cart'); // 로컬 저장소 비우기
-                    window.location.reload();
-                }).catch((error) => alert("로그아웃 에러: " + error.message));
+                signOut(auth).catch((error) => alert(getFirebaseErrorMessage(error.code)));
             } else {
                 loginModal.showModal();
             }
@@ -95,16 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeModalBtn = document.querySelector('.close-modal-btn');
     if (closeModalBtn) {
-      closeModalBtn.addEventListener('click', () => {
-        loginModal.close();
-      });
+      closeModalBtn.addEventListener('click', () => loginModal.close());
     }
 
     if (loginModal) {
       loginModal.addEventListener('click', (event) => {
-        if (event.target === loginModal) {
-          loginModal.close();
-        }
+        if (event.target === loginModal) loginModal.close();
       });
     }
 
@@ -113,12 +105,20 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = emailInput.value;
             const password = pwInput.value;
+            const name = nameInput.value;
 
             if (isSignup) {
+                 if (name.trim() === '') {
+                    alert('이름을 입력해주세요.');
+                    return;
+                }
                 createUserWithEmailAndPassword(auth, email, password)
-                    .then(() => {
-                        alert("회원가입 성공! 환영합니다.");
-                        loginModal.close();
+                    .then((userCredential) => {
+                        updateProfile(userCredential.user, { displayName: name })
+                            .then(() => {
+                                alert(`${name}님, 환영합니다!`);
+                                loginModal.close();
+                            });
                     })
                     .catch((error) => alert(getFirebaseErrorMessage(error.code)));
             } else {
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Product Detail Page Logic ---
+    // 상세 페이지 로직
     const productDetailPageContainer = document.querySelector('.product-container');
     if (productDetailPageContainer) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -173,37 +173,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Cart Page Logic ---
+    // 장바구니 페이지 로직
     const cartPage = document.querySelector('.cart-container');
     if (cartPage) {
-        renderCartPage(); // Render cart on page load
+        renderCartPage();
     }
 });
 
 // 5. 로그인 상태 감지 (실시간)
 onAuthStateChanged(auth, (user) => {
     const loginBtn = document.getElementById('login-btn');
+    const userNameDisplay = document.getElementById('user-name-display');
+
     if (user) {
+        // 유저 로그인 상태
         loginBtn.innerText = "Logout";
+        if (userNameDisplay && user.displayName) {
+            userNameDisplay.textContent = `${user.displayName}님, 반가워요!`;
+            userNameDisplay.style.display = 'inline';
+        } else if (userNameDisplay) {
+            userNameDisplay.style.display = 'none';
+        }
+
         const cartRef = ref(db, 'users/' + user.uid + '/cart');
         onValue(cartRef, (snapshot) => {
-            const dbCart = snapshot.val() || [];
-            currentCart = dbCart;
+            currentCart = snapshot.val() || [];
             updateCartCount();
-            // If on cart page, re-render
-            if (document.querySelector('.cart-container')) {
-              renderCartPage();
-            }
+            if (document.querySelector('.cart-container')) renderCartPage();
         });
     } else {
+        // 유저 로그아웃 상태
         loginBtn.innerText = "Login";
-        currentCart = []; // 장바구니를 빈 배열로 초기화
-        localStorage.removeItem('cart'); // 로컬 저장소 비우기
-        updateCartCount();
-        // If on cart page, re-render
-        if (document.querySelector('.cart-container')) {
-          renderCartPage();
+        if (userNameDisplay) {
+            userNameDisplay.style.display = 'none';
+            userNameDisplay.textContent = '';
         }
+
+        currentCart = [];
+        localStorage.removeItem('cart');
+        updateCartCount();
+        if (document.querySelector('.cart-container')) renderCartPage();
     }
 });
 
@@ -270,8 +279,7 @@ function renderCartPage() {
                 const cartItem = e.target.closest('.cart-item');
                 const productId = parseInt(cartItem.dataset.id);
                 let updatedCart = getCart().filter(id => id !== productId);
-
-                saveCart(updatedCart); // This will trigger onValue and re-render
+                saveCart(updatedCart);
             });
         });
 
