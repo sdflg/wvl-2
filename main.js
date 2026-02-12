@@ -132,6 +132,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Cart 버튼 클릭 로직
+    const cartLink = document.querySelector('.cart-link');
+    if (cartLink) {
+        cartLink.addEventListener('click', (e) => {
+            if (!auth.currentUser) {
+                e.preventDefault();
+                loginModal.showModal();
+            }
+        });
+    }
+
     // 상세 페이지 로직
     const productDetailPageContainer = document.querySelector('.product-container');
     if (productDetailPageContainer) {
@@ -156,7 +167,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const addToCartBtn = document.getElementById('add-to-cart-btn');
             addToCartBtn.dataset.id = product.id;
             
-            addToCartBtn.addEventListener('click', () => {
+            addToCartBtn.addEventListener('click', (e) => {
+                if (!auth.currentUser) {
+                    e.preventDefault();
+                    loginModal.showModal();
+                    return;
+                }
                 const productIdToAdd = parseInt(addToCartBtn.dataset.id);
                 let cart = getCart();
                 

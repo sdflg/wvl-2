@@ -16,7 +16,7 @@
         <a href="#">Women</a>
       </nav>
       <div class="header-actions">
-        <span id="user-name-display" style="margin-right: 15px; font-weight: 500; display: none;"></span>
+        <span id="user-name-display" style="margin-right: 15px; font-weight: 600; color: #333; display: none;"></span>
         <button id="login-btn">Login</button>
         <a href="cart.html" class="cart-link">
           Cart
@@ -63,10 +63,12 @@
     <button class="close-modal-btn" aria-label="Close">×</button>
     <h2>Login</h2>
     <form class="login-form">
+      <input type="text" id="signup-name" placeholder="Name" style="display:none;">
       <input type="email" placeholder="Email" required>
       <input type="password" placeholder="Password" required>
       <button type="submit">Log In</button>
     </form>
+    <p class="switch-text">Don't have an account? <span id="toggle-auth">Sign Up</span></p>
   </dialog>
 
   <script type="module" src="main.js"></script>
