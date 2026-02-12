@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waveless - Modern & Minimal</title>
+  <title>Waveless - Cart</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,23 +26,17 @@
   </header>
 
   <main>
-    <section class="hero-section">
-      <div class="container">
-        <h1>Effortless Style, Reimagined.</h1>
-        <p>Discover minimalist fashion for the modern wardrobe.</p>
-        <button class="shop-now-btn">Shop Now</button>
+    <div class="container cart-container">
+      <h1>Shopping Cart</h1>
+      <div id="cart-list">
+        <!-- Cart items will be dynamically inserted here by main.js -->
       </div>
-    </section>
-
-    <section class="product-section">
-      <div class="container">
-        <div id="product-list">
-          <!-- Products will be dynamically inserted here by main.js -->
-        </div>
+      <div id="cart-summary">
+        <!-- Cart summary will be dynamically inserted here by main.js -->
       </div>
-    </section>
+    </div>
   </main>
-  
+
   <dialog id="login-modal">
     <button class="close-modal-btn" aria-label="Close">×</button>
     <h2>Login</h2>
