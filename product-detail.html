@@ -25,14 +25,38 @@
     </div>
   </header>
 
-  <main>
+<main>
     <div class="container">
-      <div class="product-detail-container">
-        <!-- Product detail will be dynamically inserted here by main.js -->
-        <p>Loading product...</p>
+      <div id="loading-message">Loading product...</div>
+      <div id="product-content" class="product-container" style="display: none;">
+        <!-- Left: Image Section -->
+        <div class="image-section">
+          <img id="product-image" src="" alt="Product image">
+        </div>
+        <!-- Right: Info Section -->
+        <div class="info-section">
+          <h1 id="product-name"></h1>
+          <p id="product-price" class="product-price"></p>
+          <p id="product-desc"></p>
+          
+          <div class="size-selector">
+            <label for="size">Size:</label>
+            <select name="size" id="size">
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <button id="add-to-cart-btn" class="btn-cart">장바구니 담기</button>
+            <button class="btn-buy">구매하기</button>
+          </div>
+        </div>
       </div>
     </div>
-  </main>
+</main>
   
   <dialog id="login-modal">
     <button class="close-modal-btn" aria-label="Close">×</button>
@@ -44,7 +68,7 @@
     </form>
   </dialog>
 
-  <script src="main.js"></script>
+  <script type="module" src="main.js"></script>
 
 </body>
 </html>

@@ -146,34 +146,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Product Detail Page Logic ---
-    const productDetailPage = document.querySelector('.product-detail-container');
-    if (productDetailPage) {
+    const productDetailPageContainer = document.querySelector('.product-container');
+    if (productDetailPageContainer) {
         const urlParams = new URLSearchParams(window.location.search);
         const productId = parseInt(urlParams.get('id'));
         const product = products.find(p => p.id === productId);
 
-        if (product) {
-            document.title = `Waveless - ${product.name}`;
-            productDetailPage.innerHTML = `
-                <div class="product-detail-image">
-                    ${product.img ? `<img src="${product.img}" alt="${product.name}">` : `<div class="placeholder-img-detail"><span>${product.name}</span></div>`}
-                </div>
-                <div class="product-detail-info">
-                    <h1>${product.name}</h1>
-                    <p class="product-price">₩${product.price.toLocaleString()}</p>
-                    <p class="product-desc">${product.desc}</p>
-                    <button class="add-to-cart-btn" data-id="${product.id}">장바구니 담기</button>
-                </div>
-            `;
+        const loadingMessage = document.getElementById('loading-message');
+        const productContent = document.getElementById('product-content');
 
-            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+        if (product) {
+            // Populate the elements
+            document.title = `Waveless - ${product.name}`;
+            document.getElementById('product-image').src = product.img || 'placeholder.jpg';
+            document.getElementById('product-image').alt = product.name;
+            document.getElementById('product-name').textContent = product.name;
+            document.getElementById('product-price').textContent = `₩${product.price.toLocaleString()}`;
+            document.getElementById('product-desc').textContent = product.desc;
+            
+            // Show content, hide loading message
+            loadingMessage.style.display = 'none';
+            productContent.style.display = 'flex'; // Use flex to match the new CSS
+
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+            addToCartBtn.dataset.id = product.id; // Set product id on the button
+            
             addToCartBtn.addEventListener('click', () => {
-                const productId = parseInt(addToCartBtn.dataset.id);
+                const productIdToAdd = parseInt(addToCartBtn.dataset.id);
                 const cart = getCart();
                 
-                // Prevent adding duplicates
-                if (!cart.includes(productId)) {
-                    cart.push(productId);
+                if (!cart.includes(productIdToAdd)) {
+                    cart.push(productIdToAdd);
                     saveCart(cart);
                     alert('상품을 장바구니에 담았습니다.');
                 } else {
@@ -181,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         } else {
-            productDetailPage.innerHTML = '<p>상품을 찾을 수 없습니다.</p>';
+            loadingMessage.textContent = '상품을 찾을 수 없습니다.';
         }
     }
 
