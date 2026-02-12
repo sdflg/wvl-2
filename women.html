@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waveless - Cart</title>
+  <title>Waveless - Women's Collection</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,25 +27,32 @@
   </header>
 
   <main>
-    <div class="container cart-container">
-      <h1>Shopping Cart</h1>
-      <div id="cart-list">
-        <!-- Cart items will be dynamically inserted here by main.js -->
+    <section class="women-hero-section">
+      <div class="container">
+        <h1>Women's Collection</h1>
+        <p>Explore our curated selection for women.</p>
       </div>
-      <div id="cart-summary">
-        <!-- Cart summary will be dynamically inserted here by main.js -->
-      </div>
-    </div>
-  </main>
+    </section>
 
+    <section class="product-section">
+      <div class="container">
+        <div class="product-grid">
+          <!-- Products will be dynamically inserted here by main.js -->
+        </div>
+      </div>
+    </section>
+  </main>
+  
   <dialog id="login-modal">
     <button class="close-modal-btn" aria-label="Close">×</button>
     <h2>Login</h2>
     <form class="login-form">
+      <input type="text" id="signup-name" placeholder="Name" style="display:none;">
       <input type="email" placeholder="Email" required>
       <input type="password" placeholder="Password" required>
       <button type="submit">Log In</button>
     </form>
+    <p class="switch-text">Don't have an account? <span id="toggle-auth">Sign Up</span></p>
   </dialog>
 
   <script type="module" src="main.js"></script>

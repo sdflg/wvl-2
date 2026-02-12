@@ -21,50 +21,72 @@ const db = getDatabase(app);
 
 // 3. 상품 데이터
 const products = [
-    { 
-        id: 1, 
-        name: "Luxury Handmade Coat", 
-        price: 180000, 
-        img: "images/lhc gmn.png", 
+    {
+        id: 1,
+        name: "Luxury Handmade Coat",
+        price: 180000,
+        img: "images/lhc gmn.png",
         desc: "장인 정신으로 한 땀 한 땀 완성한 핸드메이드 코트입니다. 최고급 울 블렌드 소재를 사용하여 가벼우면서도 압도적인 보온성을 자랑합니다. 미니멀한 실루엣에 하이넥 지퍼 디테일로 포인트를 주어 세련된 무드를 연출합니다.",
-        extraImages: ['images/lhc gmn.png', 'images/lhcbgmn.png'] 
+        extraImages: ['images/lhc gmn.png', 'images/lhcbgmn.png'],
+        category: 'men'
     },
-    { id: 2, name: "Relaxed Chinos", price: 79000, img: "placeholder.jpg", desc: 'Comfortable and stylish chinos perfect for a relaxed yet refined look.' },
-    { id: 3, name: "Flow Knit Polo", price: 95000, img: "placeholder.jpg", desc: 'A breathable knit polo that combines classic style with modern comfort.' },
-    { id: 4, name: "Modern Oxford Shirt", price: 110000, img: "placeholder.jpg", desc: 'A crisp oxford shirt with a modern cut, suitable for any occasion.' }
+    { id: 2, name: "Relaxed Chinos", price: 79000, img: "placeholder.jpg", desc: 'Comfortable and stylish chinos perfect for a relaxed yet refined look.', category: 'men' },
+    { id: 3, name: "Flow Knit Polo", price: 95000, img: "placeholder.jpg", desc: 'A breathable knit polo that combines classic style with modern comfort.', category: 'women' },
+    { id: 4, name: "Modern Oxford Shirt", price: 110000, img: "placeholder.jpg", desc: 'A crisp oxford shirt with a modern cut, suitable for any occasion.', category: 'women' }
 ];
+
+// Helper function to render product grid
+function renderProductGrid(productsToRender, productGridElement) {
+    productGridElement.innerHTML = productsToRender.map(p => `
+        <a href="product-detail.html?id=${p.id}" class="product-card">
+            <div class="product-image-wrapper">
+                ${p.img ? `<img src="${p.img}" alt="${p.name}">` : `<span>${p.name}</span>`}
+            </div>
+            <div class="product-info">
+                <h3>${p.name}</h3>
+                <p>₩${p.price.toLocaleString()}</p>
+            </div>
+        </a>
+    `).join('');
+}
 
 let currentCart = []; // 전역 장바구니 상태: { productId, size, quantity } 객체 배열
 let pendingAddToCart = null; // 로그인 후 장바구니에 담을 상품 정보 { productId, name, price, img, size, quantity }
 
 // 4. 메인 로직 실행
 document.addEventListener('DOMContentLoaded', () => {
-    // 상품 리스트 렌더링 (index.html)
+    // 상품 리스트 렌더링
     const productGrid = document.querySelector('.product-grid');
     if (productGrid) {
-        productGrid.innerHTML = products.map(p => `
-            <a href="product-detail.html?id=${p.id}" class="product-card">
-                <div class="product-image-wrapper">
-                    ${p.img ? `<img src="${p.img}" alt="${p.name}">` : `<span>${p.name}</span>`}
-                </div>
-                <div class="product-info">
-                    <h3>${p.name}</h3>
-                    <p>₩${p.price.toLocaleString()}</p>
-                </div>
-            </a>
-        `).join('');
+        let productsToDisplay = [];
+        const currentPath = window.location.pathname;
+
+        if (currentPath.endsWith('/men.html')) {
+            productsToDisplay = products.filter(p => p.category === 'men');
+            document.title = "Waveless - Men's Collection";
+        } else if (currentPath.endsWith('/women.html')) {
+            productsToDisplay = products.filter(p => p.category === 'women');
+            document.title = "Waveless - Women's Collection";
+        } else if (currentPath.endsWith('/index.html') || currentPath === '/') {
+            productsToDisplay = products; // Show all products on index.html
+            document.title = "Waveless - Modern & Minimal";
+        } else {
+            // Default to all products if path doesn't match specific category pages
+            productsToDisplay = products;
+        }
+        renderProductGrid(productsToDisplay, productGrid);
     }
 
     // 로그인/회원가입 모달 로직
     const loginModal = document.getElementById('login-modal');
-    const loginBtn = document.getElementById('login-btn'); 
+    const loginBtn = document.getElementById('login-btn');
     const submitBtn = document.querySelector('#login-modal button[type="submit"]');
     const emailInput = document.querySelector('#login-modal input[type="email"]');
     const pwInput = document.querySelector('#login-modal input[type="password"]');
     const nameInput = document.getElementById('signup-name');
     const modalTitle = document.querySelector('#login-modal h2');
     const switchTextContainer = document.querySelector('.switch-text');
-    
+
     let isSignup = false;
 
     const handleToggleAuthClick = () => {
@@ -166,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const loadingMessage = document.getElementById('loading-message');
         const productContent = document.getElementById('product-content');
-        const productSizeSelect = document.getElementById('product-size'); 
+        const productSizeSelect = document.getElementById('product-size');
 
         if (product) {
             document.title = `Waveless - ${product.name}`;
@@ -175,26 +197,26 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('product-name').textContent = product.name;
             document.getElementById('product-price').textContent = `₩${product.price.toLocaleString()}`;
             document.getElementById('product-desc').textContent = product.desc;
-            
+
             loadingMessage.style.display = 'none';
             productContent.style.display = 'flex';
 
             const addToCartBtn = document.getElementById('add-to-cart-btn');
             addToCartBtn.dataset.id = product.id;
-            
+
             // 장바구니 담기 버튼 이벤트 리스너
             addToCartBtn.addEventListener('click', (e) => {
                 e.preventDefault(); // 기본 동작 방지
 
                 const selectedSize = productSizeSelect ? productSizeSelect.value : 'S'; // 선택된 사이즈 가져오기
                 // itemToAdd에 필요한 모든 상품 정보 포함
-                const itemToAdd = { 
-                    productId: product.id, 
-                    name: product.name, 
-                    price: product.price, 
-                    img: product.img, 
-                    size: selectedSize, 
-                    quantity: 1 
+                const itemToAdd = {
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    img: product.img,
+                    size: selectedSize,
+                    quantity: 1
                 };
 
                 if (!auth.currentUser) {
@@ -202,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loginModal.showModal();
                     return;
                 }
-                
+
                 addItemToCart(itemToAdd, true); // 로그인 상태이면 바로 알림 표시
             });
 
@@ -268,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 상품을 장바구니에 추가하는 실제 로직 함수
 function addItemToCart(item, showAlerts = false) { // item: { productId, name, price, img, size, quantity }
     let cart = getCart();
-    
+
     // 이미 같은 상품+사이즈 조합이 있는지 확인
     const existingItem = cart.find(cartItem => cartItem.productId === item.productId && cartItem.size === item.size);
 
@@ -301,7 +323,7 @@ function increaseQuantity(productId, size) {
 // 장바구니 수량 감소
 function decreaseQuantity(productId, size) {
     let cart = getCart();
-    const item = cart.find(cartItem => cartItem.productId === productId && cartItem.size === size);
+    const item = cart.find(cartItem => cartItem.productId === productId && item.size === size);
     if (item && item.quantity > 1) {
         item.quantity--;
         saveCart(cart);
@@ -329,7 +351,7 @@ function changeItemSize(productId, oldSize, newSize) {
     if (oldItemIndex > -1) {
         const itemToMove = { ...cart[oldItemIndex] }; // 기존 아이템 정보 복사
         itemToMove.size = newSize; // 새 사이즈 적용
-        
+
         cart.splice(oldItemIndex, 1); // 기존 아이템 삭제
 
         const existingNewSizeItem = cart.find(item => item.productId === productId && item.size === newSize);
@@ -400,7 +422,7 @@ function updateCartBadge() {
 }
 
 function getCart() {
-    return currentCart; 
+    return currentCart;
 }
 
 function saveCart(newCart) {
@@ -436,9 +458,9 @@ function renderCartPage() {
                             <p class="item-subtotal">소계: ₩${itemTotalPrice.toLocaleString()}</p>
                             <div class="size-selector-cart">
                                 <label for="size-select-${item.productId}-${item.size}">사이즈:</label>
-                                <select id="size-select-${item.productId}-${item.size}" 
+                                <select id="size-select-${item.productId}-${item.size}"
                                         class="cart-item-size-select"
-                                        data-product-id="${item.productId}" 
+                                        data-product-id="${item.productId}"
                                         data-old-size="${item.size}">
                                     ${availableSizes.map(s => `<option value="${s}" ${s === item.size ? 'selected' : ''}>${s}</option>`).join('')}
                                 </select>
@@ -457,7 +479,7 @@ function renderCartPage() {
             }
             return '';
         }).join('');
-        
+
         cartList.innerHTML = cartItemsHtml;
         cartSummary.innerHTML = `
             <p class="total-price">총 금액: ₩${total.toLocaleString()}</p>
