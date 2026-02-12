@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                addItemToCart(itemToAdd);
+                addItemToCart(itemToAdd, true); // 로그인 상태이면 바로 알림 표시
             });
 
             // Populate and display detail view section if product has extraImages
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 상품을 장바구니에 추가하는 실제 로직 함수
-function addItemToCart(item) { // item: { productId, name, price, img, size, quantity }
+function addItemToCart(item, showAlerts = false) { // item: { productId, name, price, img, size, quantity }
     let cart = getCart();
     
     // 이미 같은 상품+사이즈 조합이 있는지 확인
@@ -274,15 +274,15 @@ function addItemToCart(item) { // item: { productId, name, price, img, size, qua
 
     if (existingItem) {
         existingItem.quantity += item.quantity; // 수량 증가
-        alert(`'${item.name}' (${item.size}) ${item.quantity}개 추가: 현재 수량 ${existingItem.quantity}개`);
+        if (showAlerts) alert(`'${item.name}' (${item.size}) ${item.quantity}개 추가: 현재 수량 ${existingItem.quantity}개`);
     } else {
         cart.push(item);
-        alert(`'${item.name}' (${item.size})이(가) 장바구니에 담겼습니다!`);
+        if (showAlerts) alert(`'${item.name}' (${item.size})이(가) 장바구니에 담겼습니다!`);
     }
     saveCart(cart);
 
-    // 장바구니로 이동할지 확인
-    if (confirm("장바구니로 이동하시겠습니까?")) {
+    // 장바구니로 이동할지 확인 (showAlerts가 true일 때만)
+    if (showAlerts && confirm("장바구니로 이동하시겠습니까?")) {
         window.location.href = 'cart.html';
     }
 }
@@ -369,9 +369,9 @@ onAuthStateChanged(auth, (user) => {
 
             // 로그인 후 보류된 장바구니 액션 실행
             if (pendingAddToCart) {
-                // pendingAddToCart는 { productId, name, price, img, size, quantity: 1 } 형태로 저장됨
-                addItemToCart(pendingAddToCart);
-                pendingAddToCart = null; // 액션 실행 후 초기화
+                const tempPending = pendingAddToCart; // 임시 저장
+                pendingAddToCart = null; // 즉시 초기화하여 무한 루프 방지
+                addItemToCart(tempPending, true); // 로그인 후 알림 표시
             }
         });
     } else {
@@ -385,6 +385,7 @@ onAuthStateChanged(auth, (user) => {
         currentCart = JSON.parse(localStorage.getItem('cart')) || []; // 로컬 스토리지에서 불러옴
         updateCartBadge(); // 배지 업데이트
         if (document.querySelector('.cart-container')) renderCartPage(); // 장바구니 페이지인 경우 리렌더링
+        pendingAddToCart = null; // 로그아웃 시 보류된 액션 초기화
     }
 });
 
