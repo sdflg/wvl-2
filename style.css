@@ -173,6 +173,7 @@ img {
   width: 100%;
   height: 100%; /* Fill the wrapper */
   object-fit: cover; /* Maintain aspect ratio and cover container */
+  border-radius: 12px; /* Add rounded corners */
 }
 
 .product-info {
@@ -294,6 +295,7 @@ img {
   width: 100px;
   height: 100px;
   object-fit: cover;
+  border-radius: 12px;
 }
 
 .cart-item-info {
