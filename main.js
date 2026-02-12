@@ -21,11 +21,11 @@ const db = getDatabase(app);
 
 // 3. 상품 데이터
 const products = [
-    {
-        id: 1,
-        name: "Luxury Handmade Coat",
-        price: 180000,
-        img: "images/lhc gmn.png",
+    { 
+        id: 1, 
+        name: "Luxury Handmade Coat", 
+        price: 180000, 
+        img: "images/lhc gmn.png", 
         desc: "장인 정신으로 한 땀 한 땀 완성한 핸드메이드 코트입니다. 최고급 울 블렌드 소재를 사용하여 가벼우면서도 압도적인 보온성을 자랑합니다. 미니멀한 실루엣에 하이넥 지퍼 디테일로 포인트를 주어 세련된 무드를 연출합니다.",
         extraImages: ['images/lhc gmn.png', 'images/lhcbgmn.png'],
         category: 'men'
@@ -61,32 +61,34 @@ document.addEventListener('DOMContentLoaded', () => {
         let productsToDisplay = [];
         const currentPath = window.location.pathname;
 
-        if (currentPath.endsWith('/men.html')) {
+        // Check for /men or /men.html
+        if (currentPath.includes('/men') && !currentPath.includes('/women')) {
             productsToDisplay = products.filter(p => p.category === 'men');
             document.title = "Waveless - Men's Collection";
-        } else if (currentPath.endsWith('/women.html')) {
+        } 
+        // Check for /women or /women.html
+        else if (currentPath.includes('/women') && !currentPath.includes('/men')) {
             productsToDisplay = products.filter(p => p.category === 'women');
             document.title = "Waveless - Women's Collection";
-        } else if (currentPath.endsWith('/index.html') || currentPath === '/') {
+        } 
+        // Default for index.html or root path
+        else {
             productsToDisplay = products; // Show all products on index.html
             document.title = "Waveless - Modern & Minimal";
-        } else {
-            // Default to all products if path doesn't match specific category pages
-            productsToDisplay = products;
         }
         renderProductGrid(productsToDisplay, productGrid);
     }
 
     // 로그인/회원가입 모달 로직
     const loginModal = document.getElementById('login-modal');
-    const loginBtn = document.getElementById('login-btn');
+    const loginBtn = document.getElementById('login-btn'); 
     const submitBtn = document.querySelector('#login-modal button[type="submit"]');
     const emailInput = document.querySelector('#login-modal input[type="email"]');
     const pwInput = document.querySelector('#login-modal input[type="password"]');
     const nameInput = document.getElementById('signup-name');
     const modalTitle = document.querySelector('#login-modal h2');
     const switchTextContainer = document.querySelector('.switch-text');
-
+    
     let isSignup = false;
 
     const handleToggleAuthClick = () => {
@@ -188,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const loadingMessage = document.getElementById('loading-message');
         const productContent = document.getElementById('product-content');
-        const productSizeSelect = document.getElementById('product-size');
+        const productSizeSelect = document.getElementById('product-size'); 
 
         if (product) {
             document.title = `Waveless - ${product.name}`;
@@ -197,26 +199,26 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('product-name').textContent = product.name;
             document.getElementById('product-price').textContent = `₩${product.price.toLocaleString()}`;
             document.getElementById('product-desc').textContent = product.desc;
-
+            
             loadingMessage.style.display = 'none';
             productContent.style.display = 'flex';
 
             const addToCartBtn = document.getElementById('add-to-cart-btn');
             addToCartBtn.dataset.id = product.id;
-
+            
             // 장바구니 담기 버튼 이벤트 리스너
             addToCartBtn.addEventListener('click', (e) => {
                 e.preventDefault(); // 기본 동작 방지
 
                 const selectedSize = productSizeSelect ? productSizeSelect.value : 'S'; // 선택된 사이즈 가져오기
                 // itemToAdd에 필요한 모든 상품 정보 포함
-                const itemToAdd = {
-                    productId: product.id,
-                    name: product.name,
-                    price: product.price,
-                    img: product.img,
-                    size: selectedSize,
-                    quantity: 1
+                const itemToAdd = { 
+                    productId: product.id, 
+                    name: product.name, 
+                    price: product.price, 
+                    img: product.img, 
+                    size: selectedSize, 
+                    quantity: 1 
                 };
 
                 if (!auth.currentUser) {
@@ -224,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loginModal.showModal();
                     return;
                 }
-
+                
                 addItemToCart(itemToAdd, true); // 로그인 상태이면 바로 알림 표시
             });
 
@@ -290,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 상품을 장바구니에 추가하는 실제 로직 함수
 function addItemToCart(item, showAlerts = false) { // item: { productId, name, price, img, size, quantity }
     let cart = getCart();
-
+    
     // 이미 같은 상품+사이즈 조합이 있는지 확인
     const existingItem = cart.find(cartItem => cartItem.productId === item.productId && cartItem.size === item.size);
 
