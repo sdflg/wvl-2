@@ -120,14 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert("회원가입 성공! 환영합니다.");
                         loginModal.close();
                     })
-                    .catch((error) => alert("회원가입 에러: " + error.message));
+                    .catch((error) => alert(getFirebaseErrorMessage(error.code)));
             } else {
                 signInWithEmailAndPassword(auth, email, password)
                     .then(() => {
                         alert("로그인 성공!");
                         loginModal.close();
                     })
-                    .catch((error) => alert("로그인 실패: " + error.message));
+                    .catch((error) => alert(getFirebaseErrorMessage(error.code)));
             }
         });
     }
@@ -278,5 +278,25 @@ function renderCartPage() {
     } else {
         cartList.innerHTML = '<p>장바구니가 비어 있습니다.</p>';
         cartSummary.innerHTML = '';
+    }
+}
+
+// Firebase 에러 메시지 번역 함수
+function getFirebaseErrorMessage(errorCode) {
+    switch (errorCode) {
+        case 'auth/invalid-email':
+            return "유효하지 않은 이메일 형식입니다.";
+        case 'auth/user-not-found':
+            return "존재하지 않는 계정입니다.";
+        case 'auth/wrong-password':
+            return "비밀번호가 틀렸습니다.";
+        case 'auth/email-already-in-use':
+            return "이미 사용 중인 이메일입니다.";
+        case 'auth/weak-password':
+            return "비밀번호를 6자리 이상 입력해주세요.";
+        case 'auth/network-request-failed':
+            return "네트워크 연결이 원활하지 않습니다.";
+        default:
+            return `로그인/회원가입에 실패했습니다. 다시 시도해주세요. (${errorCode})`;
     }
 }
