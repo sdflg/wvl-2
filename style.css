@@ -212,6 +212,8 @@ img {
   max-width: 500px;
   border-radius: 8px;
   border: 1px solid var(--accent-color);
+  aspect-ratio: 3 / 4; /* New: Maintain 3:4 aspect ratio */
+  object-fit: cover; /* New: Ensure image covers the area */
 }
 
 .info-section {

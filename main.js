@@ -21,7 +21,7 @@ const db = getDatabase(app);
 
 // 3. 상품 데이터
 const products = [
-    { id: 1, name: "Luxury Handmade Coat", price: 180000, img: "coat.jpg", desc: 'A luxurious, handcrafted coat designed for elegance and warmth.' },
+    { id: 1, name: "Luxury Handmade Coat", price: 180000, img: "images/lhc gmn.png", desc: 'A luxurious, handcrafted coat designed for elegance and warmth.' },
     { id: 2, name: "Relaxed Chinos", price: 79000, img: "placeholder.jpg", desc: 'Comfortable and stylish chinos perfect for a relaxed yet refined look.' },
     { id: 3, name: "Flow Knit Polo", price: 95000, img: "placeholder.jpg", desc: 'A breathable knit polo that combines classic style with modern comfort.' },
     { id: 4, name: "Modern Oxford Shirt", price: 110000, img: "placeholder.jpg", desc: 'A crisp oxford shirt with a modern cut, suitable for any occasion.' }
