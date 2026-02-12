@@ -82,7 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             if (auth.currentUser) {
-                signOut(auth).catch((error) => alert("로그아웃 에러: " + error.message));
+                signOut(auth).then(() => {
+                    alert("로그아웃 되었습니다.");
+                    localStorage.removeItem('cart'); // 로컬 저장소 비우기
+                    window.location.reload();
+                }).catch((error) => alert("로그아웃 에러: " + error.message));
             } else {
                 loginModal.showModal();
             }
@@ -193,7 +197,8 @@ onAuthStateChanged(auth, (user) => {
         });
     } else {
         loginBtn.innerText = "Login";
-        currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+        currentCart = []; // 장바구니를 빈 배열로 초기화
+        localStorage.removeItem('cart'); // 로컬 저장소 비우기
         updateCartCount();
         // If on cart page, re-render
         if (document.querySelector('.cart-container')) {
