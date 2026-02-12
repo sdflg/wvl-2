@@ -21,7 +21,14 @@ const db = getDatabase(app);
 
 // 3. 상품 데이터
 const products = [
-    { id: 1, name: "Luxury Handmade Coat", price: 180000, img: "images/lhc gmn.png", desc: 'A luxurious, handcrafted coat designed for elegance and warmth.' },
+    { 
+        id: 1, 
+        name: "Luxury Handmade Coat", 
+        price: 180000, 
+        img: "images/lhc gmn.png", 
+        desc: "장인 정신으로 한 땀 한 땀 완성한 핸드메이드 코트입니다. 최고급 울 블렌드 소재를 사용하여 가벼우면서도 압도적인 보온성을 자랑합니다. 미니멀한 실루엣에 하이넥 지퍼 디테일로 포인트를 주어 세련된 무드를 연출합니다.",
+        extraImages: ['images/lhc gmn.png', 'images/lhcbgmn.png'] 
+    },
     { id: 2, name: "Relaxed Chinos", price: 79000, img: "placeholder.jpg", desc: 'Comfortable and stylish chinos perfect for a relaxed yet refined look.' },
     { id: 3, name: "Flow Knit Polo", price: 95000, img: "placeholder.jpg", desc: 'A breathable knit polo that combines classic style with modern comfort.' },
     { id: 4, name: "Modern Oxford Shirt", price: 110000, img: "placeholder.jpg", desc: 'A crisp oxford shirt with a modern cut, suitable for any occasion.' }
@@ -184,6 +191,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('이미 장바구니에 있는 상품입니다.');
                 }
             });
+
+            // Populate and display detail view section if product has extraImages
+            const detailViewSection = document.getElementById('detail-view-section');
+            const productLongDesc = document.getElementById('product-long-desc');
+            const extraImagesContainer = document.getElementById('extra-images-container');
+
+            if (product.extraImages && productLongDesc && extraImagesContainer && detailViewSection) {
+                productLongDesc.textContent = product.desc; // Use the detailed description
+                extraImagesContainer.innerHTML = ''; // Clear previous images
+                product.extraImages.forEach(imagePath => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imagePath;
+                    imgElement.alt = product.name + ' detail';
+                    imgElement.classList.add('detail-view-image'); // Add class for styling
+                    extraImagesContainer.appendChild(imgElement);
+                });
+                detailViewSection.style.display = 'block'; // Make the section visible
+            }
         } else {
             loadingMessage.textContent = '상품을 찾을 수 없습니다.';
         }

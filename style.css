@@ -430,3 +430,44 @@ img {
     grid-template-columns: 1fr;
   }
 }
+
+/* Detail View Section Styles */
+#detail-view-section {
+  padding: 40px 0;
+  margin-top: 40px;
+  text-align: center;
+  background-color: var(--accent-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#detail-view-section h3 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+#product-long-desc {
+  padding: 20px 15px; /* Adjusted padding */
+  font-size: 1rem; /* Slightly reduced font size */
+  line-height: 1.8;
+  color: #444;
+  max-width: 800px; /* Limit width for readability */
+  margin: 0 auto 30px auto; /* Center and add space below */
+  text-align: center; /* Ensure text is centered */
+}
+
+#extra-images-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Space between images */
+    padding-bottom: 20px;
+}
+
+.detail-view-image {
+  width: 100%;
+  max-width: 600px; /* Adjust as needed */
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+}
